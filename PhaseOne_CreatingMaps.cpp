@@ -2,12 +2,13 @@
 
 Minesweeper::Minesweeper()
 {
-    // Initialize variables with default values or get input
     rowSize = 0;
     columnSize = 0;
     mineCount = 0;
+    countOfHiden = 0;
     mapMaker();
 }
+
 
 void Minesweeper::mapMaker()
 {
@@ -26,19 +27,15 @@ void Minesweeper::mapMaker()
         cout << "Please set mines count (it must be a number between 0 and " << rowSize * columnSize * 0.6 << "): ";
         cin >> mineCount;
     }
-    countOfHiden = rowSize * columnSize;
-    thread t1(&Minesweeper::treadFunction, this, ref(A1));
-    thread t2(&Minesweeper::treadFunction, this, ref(A2));
-    thread t3(&Minesweeper::treadFunction, this, ref(A3));
-    thread t4(&Minesweeper::treadFunction, this, ref(A4));
-    thread t5(&Minesweeper::treadFunction, this, ref(A5));
+    A1 = mapMaker(rowSize, columnSize, mineCount);
+    A2 = mapMaker(rowSize, columnSize, mineCount);
+    A3 = mapMaker(rowSize, columnSize, mineCount);
+    A4 = mapMaker(rowSize, columnSize, mineCount);
+    A5 = mapMaker(rowSize, columnSize, mineCount);
     publicMap = vector<vector<string>>(rowSize, vector<string>(columnSize, "⬜"));
-    t1.join();
-    t2.join();
-    t3.join();
-    t4.join();
-    t5.join();
+    countOfHiden = rowSize * columnSize;
 }
+
 
 vector<vector<string>> Minesweeper::mapMaker(int rowSize, int columnSize, int MineCount)
 {
@@ -99,10 +96,6 @@ int Minesweeper::countOfMinesOnboard(const vector<vector<string>> &A, int x, int
     return count;
 }
 
-void Minesweeper::treadFunction(vector<vector<string>> &A)
-{
-    A = mapMaker(rowSize, columnSize, mineCount);
-}
 
 void Minesweeper::getRandomCoordinates(int &x, int &y) const
 {
@@ -122,6 +115,20 @@ void Minesweeper::printMap()
 {
     const int width = 1;
     for (const auto &row : publicMap)
+    {
+        for (const auto &cell : row)
+        {
+            std::cout << std::setw(width) << cell;
+        }
+        std::cout << "\n";
+    }
+}
+
+
+void Minesweeper::printMapH()
+{
+    const int width = 1;
+    for (const auto &row : hiddenMap)
     {
         for (const auto &cell : row)
         {

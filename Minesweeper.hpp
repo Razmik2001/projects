@@ -7,7 +7,6 @@
 #include <iostream>
 #include <vector>
 #include <random>
-#include <thread>
 #include <string>
 #include <cstdlib>
 #include <iomanip>
@@ -39,7 +38,6 @@ private:
     void mapMaker();
     vector<vector<string>> mapMaker(int rowSize, int columnSize, int MineCount);
     int countOfMinesOnboard(const vector<vector<string>> &A, int x, int y) const;
-    void treadFunction(vector<vector<string>> &A);
 
     // PhaseTwo
     void firstOpen(int x, int y);
@@ -51,7 +49,7 @@ private:
     void del();
     int countOfFlagsOnboard(int x, int y);
     void printMap();
-
+    void printMapH();
 public:
     Minesweeper();
     ~Minesweeper() {}

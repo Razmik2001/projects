@@ -8,6 +8,9 @@ void Minesweeper::del()
     A5.clear();
     hiddenMap.clear();
     publicMap.clear();
+    rowSize = -1;
+    columnSize = -1;
+    mineCount = -1;
 }
 
 void Minesweeper::mapChouseing(int x, int y)
@@ -21,8 +24,7 @@ void Minesweeper::mapChouseing(int x, int y)
         {
             hiddenMap = std::move(map);
             map.clear();
-            thread t1(&Minesweeper::treadFunction, this, ref(map));
-            t1.join();
+            map = mapMaker(rowSize, columnSize, mineCount);
             break;
         }
         ++mapName;
@@ -85,15 +87,18 @@ void Minesweeper::open(int x, int y)
         Boom();
     else
     {
-        publicMap[x][y] = hiddenMap[x][y][0];
+        if (hiddenMap[x][y][0] != '-')
+            publicMap[x][y] = hiddenMap[x][y][0];
+        else
+            publicMap[x][y] = "▢";
         countOfHiden--;
-        doubleOpen(x, y);
+        doubleOpen(x,y);
     }
 }
 
 void Minesweeper::doubleOpen(int x, int y)
 {
-    if (hiddenMap[x][y][0] == '-' || countOfFlagsOnboard(x, y) == stoi(hiddenMap[x][y]))
+    if (hiddenMap[x][y][0] == '-' || (isdigit(hiddenMap[x][y][0]) && countOfFlagsOnboard(x, y) == stoi(hiddenMap[x][y])))
     {
         int directions[8][2] = {
             {-1, -1}, {-1, 0}, {-1, 1},
@@ -112,6 +117,7 @@ void Minesweeper::doubleOpen(int x, int y)
         }
     }
 }
+
 
 int Minesweeper::countOfFlagsOnboard(int x, int y)
 {
@@ -142,39 +148,43 @@ int Minesweeper::countOfFlagsOnboard(int x, int y)
 void Minesweeper::play()
 {
     int x = -1, y = -1;
-    while ((x < 0 || x > rowSize) || (y < 0 || y > columnSize))
+    while ((x < 1 || x > rowSize) || (y < 1 || y > columnSize))
     {
-        cout << "Please set [x,y] (x must be positive and less than " << rowSize + 1 << ", y must be positive and less than " << columnSize + 1 << "): ";
+        cout << "Please set [x,y] (x must be positive and less than " << rowSize << ", y must be positive and less than " << columnSize << "): ";
         cin >> x >> y;
     }
-    x--;y--;
+    x--;
+    y--;
     firstOpen(x, y);
     printMap();
     while (countOfHiden != 0)
     {
-    	x = -1;
-    	y = -1;
-        while ((x < 0 || x > rowSize) || (y < 0 || y > columnSize))
+        x = -1;
+        y = -1;
+        while ((x < 1 || x > rowSize) || (y < 1 || y > columnSize))
         {
-            cout << "Please set [x,y] (x must be positive and less than " << rowSize + 1 << ", y must be positive and less than " << columnSize + 1 << "): ";
+            cout << "Please set [x,y] (x must be positive and less than " << rowSize << ", y must be positive and less than " << columnSize << "): ";
             cin >> x >> y;
         }
-        x--;y--;
+        x--;
+        y--;
         char c;
-        cout << "if you want open/o,if you want set flag/f if doubleOpen other button:" << endl;
+        cout << "if you want open/o, if you want set flag/f, if doubleOpen other button:" << endl;
         cin >> c;
         switch (c)
-        	{
-        	case 'o':
-       			open(x, y);
-       			break;
-       		case 'f':
-       			flag(x,y);
-       			break;
-       		default:
-       			doubleOpen(x,y);
-       			break;
-        	}
+        {
+        case 'o':
+            open(x, y);
+            break;
+        case 'f':
+            flag(x, y);
+            break;
+        default:
+            doubleOpen(x, y);
+            break;
+        }
         printMap();
+        printMapH();
     }
+    cout << "\t\t\t\t YOu WIN";
 }
