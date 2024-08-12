@@ -74,9 +74,18 @@ void Minesweeper::firstOpen(int x, int y)
 
 void Minesweeper::flag(int x, int y)
 {
+    if (publicMap[x][y] == F)
+    {
+        publicMap[x][y] = H;
+        countOfHiden++;
+        return;
+    }
     if (hiddenMap[x][y][1] == 'c')
+    {
         publicMap[x][y] = F;
-    countOfHiden--;
+        countOfHiden--;
+    }
+   
 }
 
 void Minesweeper::open(int x, int y)
@@ -110,7 +119,7 @@ void Minesweeper::doubleOpen(int x, int y)
             int newX = x + directions[i][0];
             int newY = y + directions[i][1];
 
-            if (newX >= 0 && newX < rowSize && newY >= 0 && newY < columnSize)
+            if (newX >= 0 && newX < rowSize && newY >= 0 && newY < columnSize && publicMap[x][y] != "▢")
             {
                 open(newX, newY);
             }
@@ -148,29 +157,42 @@ int Minesweeper::countOfFlagsOnboard(int x, int y)
 void Minesweeper::play()
 {
     int x = -1, y = -1;
-    while ((x < 1 || x > rowSize) || (y < 1 || y > columnSize))
+    while (true)
     {
-        cout << "Please set [x,y] (x must be positive and less than " << rowSize << ", y must be positive and less than " << columnSize << "): ";
+        cout << "Please set [x,y] (both positive and within bounds): ";
         cin >> x >> y;
-    }
-    x--;
-    y--;
-    firstOpen(x, y);
-    printMap();
-    while (countOfHiden != 0)
-    {
-        x = -1;
-        y = -1;
-        while ((x < 1 || x > rowSize) || (y < 1 || y > columnSize))
+        if (cin.fail() || x < 1 || x > rowSize || y < 1 || y > columnSize)
         {
-            cout << "Please set [x,y] (x must be positive and less than " << rowSize << ", y must be positive and less than " << columnSize << "): ";
-            cin >> x >> y;
+            cin.clear(); // Clear the error flags
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Discard invalid input
+            cout << "Invalid input. Try again.\n";
+            continue;
         }
         x--;
         y--;
+        break;
+    }
+    firstOpen(x, y);
+    printMap();
+
+    while (countOfHiden != 0)
+    {
+        cout << "Please set [x,y]: ";
+        cin >> x >> y;
+        if (cin.fail() || x < 1 || x > rowSize || y < 1 || y > columnSize)
+        {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << "Invalid input. Try again.\n";
+            continue;
+        }
+        x--;
+        y--;
+
         char c;
-        cout << "if you want open/o, if you want set flag/f, if doubleOpen other button:" << endl;
+        cout << "if you want open/o, set flag/f, double open/other: ";
         cin >> c;
+
         switch (c)
         {
         case 'o':
@@ -184,7 +206,6 @@ void Minesweeper::play()
             break;
         }
         printMap();
-        printMapH();
     }
-    cout << "\t\t\t\t YOu WIN";
+    cout << "\t\t\t\t YOU WIN\n";
 }
