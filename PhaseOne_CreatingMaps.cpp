@@ -113,7 +113,7 @@ void Minesweeper::getRandomCoordinates(int &x, int &y) const
 
 void Minesweeper::printMap()
 {
-    const int width = 1;
+    const int width = 2;
     for (const auto &row : publicMap)
     {
         for (const auto &cell : row)

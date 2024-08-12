@@ -91,7 +91,10 @@ void Minesweeper::flag(int x, int y)
 void Minesweeper::open(int x, int y)
 {
     if (publicMap[x][y] != H)
+    {
+        dontTouch.push_back({x,y});
         doubleOpen(x, y);
+    }
     else if (publicMap[x][y] == H && hiddenMap[x][y][0] == 'M')
         Boom();
     else
@@ -99,8 +102,9 @@ void Minesweeper::open(int x, int y)
         if (hiddenMap[x][y][0] != '-')
             publicMap[x][y] = hiddenMap[x][y][0];
         else
-            publicMap[x][y] = "▢";
+            publicMap[x][y] = " ";
         countOfHiden--;
+        dontTouch.push_back({x,y});
         doubleOpen(x,y);
     }
 }
@@ -119,7 +123,9 @@ void Minesweeper::doubleOpen(int x, int y)
             int newX = x + directions[i][0];
             int newY = y + directions[i][1];
 
-            if (newX >= 0 && newX < rowSize && newY >= 0 && newY < columnSize && publicMap[x][y] != "▢")
+            auto it = std::find(dontTouch.begin(),dontTouch.end(),std::make_pair(newX, newY));
+
+            if (newX >= 0 && newX < rowSize && newY >= 0 && newY < columnSize && it == dontTouch.end())
             {
                 open(newX, newY);
             }

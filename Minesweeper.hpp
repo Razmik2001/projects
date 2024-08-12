@@ -10,7 +10,7 @@
 #include <string>
 #include <cstdlib>
 #include <iomanip>
-
+#include <algorithm>
 
 using namespace std;
 
@@ -26,6 +26,7 @@ private:
 
     vector<vector<string>> hiddenMap;
     vector<vector<string>> publicMap;
+    vector<pair<int,int>> dontTouch;
 
     int rowSize;
     int columnSize;
