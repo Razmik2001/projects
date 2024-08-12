@@ -12,6 +12,7 @@
 #include <iomanip>
 #include <algorithm>
 
+
 using namespace std;
 
 class Minesweeper
